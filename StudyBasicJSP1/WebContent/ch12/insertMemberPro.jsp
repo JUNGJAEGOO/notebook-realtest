@@ -18,3 +18,7 @@ logon.insertMember(member);
 %>
 
 <jsp:getProperty property="id" name="member"/> 님의 회원가입을 축하 드립니다.
+
+<form method="post" action="inserMemberForm.jsp">
+<input type="submit" value="처음으로 가기">
+</form>

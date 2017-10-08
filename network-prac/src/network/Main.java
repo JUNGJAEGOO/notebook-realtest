@@ -1,4 +1,4 @@
-package network-prac;
+package network;
 import java.util.*;
 
 

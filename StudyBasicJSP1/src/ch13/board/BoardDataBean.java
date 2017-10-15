@@ -85,6 +85,18 @@ public class BoardDataBean {
 		return content;
 	}
 	public void setContent(String content) {
+		StringBuffer sb = new StringBuffer(content);
+		int count = 25;
+		int br = 4;
+		
+		while( count < sb.length()) {
+		sb.insert(count, "<br>");
+		
+		count=count+br+25;
+		
+		}
+		
+		content = sb.toString();
 		this.content = content;
 	}
 	

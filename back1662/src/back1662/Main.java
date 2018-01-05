@@ -1,86 +1,159 @@
 package back1662;
 
-import java.util.Scanner;
+import java.math.BigInteger;
+import java.util.*;
 
 public class Main {
 	public static void main(String args[]) {
-		Scanner in = new Scanner(System.in);
-		String input = in.nextLine();
-		char inner[] = input.toCharArray();
+		Scanner inner = new Scanner(System.in);
+		String in = inner.nextLine();
 		
-		while ( true) {
-		int savefirst = -1;
-		int beforefirst = -1;
+		/*while ( true ) {
+		 if (in.contains("()")) {
+			in = in.replace("()","");
+		 }else {
+			 break;
+		 }
+		}*/
+		
+		//System.out.println(in);
+		if ( in.equals("")) {
+			System.out.println(0);
+			return;
+		}
+		char[] input = in.toCharArray();
+		
 		int num = 0;
-		for ( int i = 0 ; i < inner.length ; i++) {
-			if ( inner[i] == '(') {
-				beforefirst = savefirst;
-				savefirst = i;
+		for ( int i = 0 ; i < input.length ; i++) {
+			if ( input[i] == '(') {
 				num++;
 			}
 		}
-		int savelast = inner.length;
-		for ( int i = 0 ; i < inner.length ; i++) {
-			if ( inner[i] == ')') {
-				savelast = i;
+		
+		if ( num == 0) {
+			System.out.println(in);
+			return;
+		}
+		
+		// 9(9(9(9(9(9(9(9(9(9(9(9(9(9(9(9(111)))))))))))))))
+		
+		Stack<Character> st = new Stack<>();
+		
+		int cnt = 0;
+		while ( input[cnt] != ')') {
+			st.add(input[cnt]);
+			cnt++;;
+		}
+		
+		boolean first = true;
+		while ( true ) {
+			if(  num == 0 ) {
 				break;
+			}
+			String tmp = "";
+			boolean pass = false;
+			String a= "";
+			String b = "";
+			if ( first == false ) {
+			while ( true ) {
+				char c = st.pop();
+				if ( c == '(' ) {
+					num--;
+					a = rev(a);
+					b = rev(b);
+					//System.out.println(b);
+					BigInteger haha = new BigInteger(b);
+					//System.out.println("a is "+a+", b is "+haha);
+					
+					tmp = String.valueOf(haha.add(BigInteger.valueOf(a.length())));
+					break;
+				}else {
+					if ( pass == false && c != '+') {
+						b += c;
+					}else {
+						if ( c != '+') {
+						a += c;
+						}
+					}
+					if ( c == '+') {
+						pass = true;
+					}
+					
+				}
+			}
+			}else if ( first == true) {
+				
+				while ( true ) {
+					char c = st.pop();
+					if ( c == '(') {
+						num--;
+						break;
+					}else {
+						tmp += c;
+					}
+				}
+				
+			}
+			
+			//System.out.println(tmp);
+			
+			BigInteger len = BigInteger.valueOf(tmp.length());
+			char banbok = st.pop();
+			//System.out.println("banbok is "+banbok);
+			if ( first == false) {
+				len = new BigInteger(tmp);
+			}
+			//System.out.println("len is "+len);
+			String insert = String.valueOf( len.multiply(BigInteger.valueOf(Integer.parseInt(String.valueOf(banbok))) ));
+			//System.out.println("intsert is "+ insert);
+			char[] ins = insert.toCharArray();
+			
+			first = false;
+			st.add('+');
+			for ( int i = 0 ; i < ins.length ; i++) {
+				st.add(ins[i]);
 			}
 		}
 		
-		if ( savefirst == -1) {
-			break;
+		String res ="";
+		while ( !st.isEmpty() ) {
+			res += st.pop();
 		}
-		String dogoo ="";
+		res = rev(res);
+		//System.out.println(res);
 		
-		for ( int i = beforefirst+1 ; i <= savelast ; i++) {
-			dogoo += inner[i];
-		}
-
-		String res = back(dogoo);
-		System.out.println(res);
-		char tmp[] = new char[beforefirst+1+num-1+res.length()];
-		for (int i = 0 ; i < beforefirst+1 ; i++) {
-			tmp[i] = inner[i];
-		}
-		System.out.println(tmp);
-		int n = savefirst;
-		char tt[] = res.toCharArray();
-		for ( int i = 0 ; i < tt.length ; i++ ) {
+		char[] result = res.toCharArray();
+		
+		String A = "";
+		String B = "";
+		
+		boolean passing = false;
+		for ( int i = 0 ; i < result.length ; i++) {
+			if ( passing == true) {
+				B += result[i];
+				continue;
+			}
 			
-			tmp[n+i] = tt[i];
+			if ( result[i] == '+') {
+				passing = true;
+			}else if ( passing == false) {
+				A += result[i];
+			}
 		}
-		for ( int i = savefirst+tt.length ; i < tmp.length ; i++) {
-			tmp[i] = ')';
-		}
-		inner = tmp;
-		System.out.println(inner);
-		break;
 		
-		}
+		//System.out.println(A+"+"+B);
+		System.out.println(new BigInteger(B).add(BigInteger.valueOf(A.length())));
+		
+		
 	}
 	
-	public static String back(String in) {
-		String ans ="";
-		char[] ha = in.toCharArray();
-		int saveidx = -1;
-		String num ="";
-		for ( int i = 0 ; i < in.length() ; i++) {
-			
-			if ( ha[i] == '(') {
-				saveidx = i;
-				break;
-			}
-			num += String.valueOf(ha[i]);
+	public static String rev(String a) {
+		char tmp[] = a.toCharArray();
+		String ans = "";
+		for ( int i = tmp.length-1 ; i >= 0 ; i--) {
+			ans += tmp[i];
 		}
 		
-		System.out.println("num: "+num);
-		
-		int banbok = Integer.parseInt(String.valueOf(num));
-		in = in.substring(saveidx+1, in.length()-1);
-		System.out.println(in);
-		for ( int i = 0 ; i < banbok ; i++) {
-			ans += in;
-		}
 		return ans;
 	}
 }

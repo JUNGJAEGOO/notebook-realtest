@@ -5,119 +5,124 @@ import java.util.*;
 public class Main {
 
 	static boolean visit[];
-	static data shark[];
-	static data sharkA[];
-	static int A[];
-	static int B[];
-	static LinkedList<Integer> list[];
+	static int A[],B[];
+	static ArrayList<Integer> adj[];
+	static int check[][];
 	
 	public static void main(String args[]) throws IOException {
-		Scanner in = new Scanner(System.in);
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int N = Integer.parseInt(br.readLine());
-		int result = 0;
-		list = new LinkedList[N];
-		visit = new boolean[N];
-		B = new int[N];
-		A = new int[N];
-		
-		for ( int i = 0 ; i < N ; i ++ ) {
-			;
-			list[i] = new LinkedList<Integer>();
-		}
-		for ( int i = 0 ; i < N ; i ++ ) {
-			A[i] = -1;
-			B[i] = -1;
-			
-		}
-		
-		sharkA = new data[N];
-		shark = new data[N];
-		
 		StringTokenizer st;
-		for ( int i = 0 ; i < N ; i++) {
-			shark[i] = new data();
-			String info = br.readLine();
-			st = new StringTokenizer(info);
-			
-			shark[i].size = Integer.parseInt(st.nextToken());
-			shark[i].speed = Integer.parseInt(st.nextToken());
-			shark[i].wise = Integer.parseInt(st.nextToken());
-			shark[i].index = i;
+		node list[] = new node[N];
+		for (int i = 0 ; i < N ; i++) {
+			st = new StringTokenizer(br.readLine()," ");
+			int idx = i;
+			int size = Integer.parseInt(st.nextToken());
+			int speed = Integer.parseInt(st.nextToken());
+			int wise = Integer.parseInt(st.nextToken());
+			list[i] = new node(idx,size,speed,wise);
 		}
 		
-		for ( int i = 0 ; i < N ; i++) {
-			sharkA[i] = new data();
-			sharkA[i].size = shark[i].size;
-			sharkA[i].speed = shark[i].speed;
-			sharkA[i].wise = shark[i].wise;
-			sharkA[i].index = i;
-
-			
+		check = new int[N][N];
+		adj = new ArrayList[N];
+		A = new int[N];
+		B = new int[N];
+		for (int i = 0 ; i < N ; i++) {
+			adj[i] = new ArrayList<>();
 		}
 		
-		for(int i = 0 ; i < N;i++) {
-			for(int j = 0 ; j < N;j++) {
-			if ( (int)i == j) {
-				continue;
-			}
-			else {
-				if ( sharkA[i].size>=shark[j].size && sharkA[i].speed>=shark[j].speed && sharkA[i].wise>=shark[j].wise ) {
-			    list[i].add(j);}
-			}
+		for (int i = 0 ; i < N ; i++) {
+			int nowsize = list[i].size;
+			int nowspeed = list[i].speed;
+			int nowwise = list[i].wise;
+			for (int j = 0 ; j < N ; j++) {
+				if ( i == j ) {
+					continue;
+				}else {
+					int nextsize = list[j].size;
+					int nextspeed = list[j].speed;
+					int nextwise = list[j].wise;
+					
+					if ( nowsize == nextsize && nowspeed == nextspeed && nowwise == nextwise && i > j) {
+						continue;  // 핵심!!! 중복 제거를 위해서!!
+					}
+					if ( nowsize >= nextsize && nowspeed >= nextspeed && nowwise >= nextwise ) {
+						adj[j].add(i);
+					}
+				}
 			}
 		}
 		
-	/*			for ( int i = 0 ; i < N ; i++) {
-			for(int j = 0 ; j < list[i].size() ; j++) {
-				System.out.print(list[i].get(j));
+		int ans = 0;
+		visit = new boolean[N];
+		Arrays.fill(A,-1);
+		Arrays.fill(B,-1);
+		for (int i = 0 ; i < N ; i++) {
+			Arrays.fill(visit,false);
+			if ( DFS(i)) {
+				ans++;
 			}
-			System.out.println();
+		}
+		
+		for (int i = 0 ; i < N ; i++) {
+			System.out.print(A[i]+" ");
+		}System.out.println();
+		for (int i = 0 ; i < N ; i++) {
+			System.out.print(B[i]+" ");
+		}System.out.println();
+		
+		
+		//Arrays.fill(A,-1);
+		//Arrays.fill(B,-1);
+		for (int i = 0 ; i < N ; i++) {
+			Arrays.fill(visit,false);
+			if ( DFS(i)) {
+				ans++;
+			}
+		}
+		
+		for (int i = 0 ; i < N ; i++) {
+			System.out.print(A[i]+" ");
+		}System.out.println();
+		for (int i = 0 ; i < N ; i++) {
+			System.out.print(B[i]+" ");
+		}System.out.println();
+		
+		System.out.println(ans);
+		/*for ( int i = 0 ; i < N ; i++) {
+			System.out.println(adj[i]);
 		}*/
-		
-	for(int k = 0 ; k < 2 ; k ++) {
-		for ( int i = 0 ; i < N ; i++) {
-			for ( int j = 0; j < N ; j++ ) {
-				visit[i] = false;
-			}
-			
-			for ( int j = 0 ; j < N ; j++) {
-				if ( dfs(j,N) ) { result++; }
-			}
-		}
-	}
-		System.out.println(N-result);
 	}
 	
-	public static class data{
-		int index;
+	public static boolean DFS(int start) {
+		if ( visit[start] == true) {
+			return false;
+		}
+		visit[start] = true;
+		
+		for (int i = 0 ; i < adj[start].size() ; i++) {
+			int next = adj[start].get(i);
+			if ( B[next] == -1 || DFS(B[next])) {
+				A[start] = next;
+				B[next] = start;
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public static class node{
+		int idx;
 		int size;
 		int speed;
 		int wise;
-		
-	}
-	
-	public static boolean dfs(int start,int N) {
-		
-		if ( visit[start] ) { return false; }
-		visit[start] = true;
-		
-		for ( int i = 0 ; i < list[start].size() ; i ++) {
-			
-			int tmp = list[start].get(i);	
-			
-				if ( B[tmp] == -1 || dfs(B[tmp],N)) {
-
-					
-					B[tmp] = start;
-
-					return true;
-
-				}
-			}
-		
-		
-		return false;
+		node ( int idx, int size,int speed,int wise){
+			this.idx = idx;
+			this.size = size;
+			this.speed = speed;
+			this.wise = wise;
+		}
 	}
 	
 }

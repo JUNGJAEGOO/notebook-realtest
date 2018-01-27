@@ -3,37 +3,44 @@ package back7579;
 import java.util.Scanner;
 
 public class Main {
-	public static int dp[][];
+	static int dp[];
+	static int cost[],memory[];
 	static int N,M;
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
 		int N = in.nextInt();
 		int M = in.nextInt();
-		int mem[] = new int[N];
-		for ( int i = 0 ; i < N ; i++) {
-			mem[i] = in.nextInt();	
+		memory = new int[N];
+		cost = new int[N];
+		dp = new int[10000001];
+		long sum = 0;
+		for(int i = 0 ; i < N ; i++) {
+			memory[i] = in.nextInt();
+			sum += memory[i];
 		}
-		int c[] = new int[N];
-		for ( int i = 0 ; i < N ; i++) {
-			c[i] = in.nextInt();
+		
+		for(int i = 0 ; i < N ; i++) {
+			cost[i] = in.nextInt();
 		}
-		dp = new int[10005][105];
-		for ( int i = 0 ; i < 10005 ; i++) {
-			for ( int j = 0 ; j < 105 ; j++) {
-				dp[i][j] = -1;
+		
+		for (int i = 0; i < N ; i++) {
+			for (int j = (int) sum ; j >= cost[i]  ; j--) {
+				dp[j] = Math.max(dp[j], dp[j-cost[i]]+memory[i]);
+			}
+		}
+		
+		/*for (int i = 0 ; i <= M ; i++) {
+			System.out.print(dp[i]+" ");
+		}*/
+		
+		for (int i = 0 ; i <= sum ; i++) {
+			if ( dp[i] >= M)
+			{
+				System.out.println(i);
+				return;
 			}
 		}
 		
 	}
 	
-	public static int func(int c,int visit) {
-		if ( visit == N ) { return 0;}
-		int ret = dp[c][visit];
-		if ( ret != -1) { return ret; }
-		ret = 0;
-		
-		
-		return ret;
-		
-	}
 }

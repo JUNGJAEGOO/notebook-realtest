@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Main {
 	static int p[];
-	static int cnt[];
+	static int ans;
 	
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
@@ -14,10 +14,10 @@ public class Main {
 			int N = in.nextInt();
 			int M = in.nextInt();
 			p = new int[N+1];
-			cnt = new int[N+1];
+			
+			ans = 0;
 			for (int i = 1 ; i <= N ; i++) {
 				p[i] = i;
-				cnt[i] = 0;
 			}
 			
 			for (int i = 0 ; i < M ; i++) {
@@ -27,12 +27,8 @@ public class Main {
 				
 			}
 			
-			int sum = 0;
-			for (int i = 1 ; i<= N ; i++) {
-				//System.out.println(cnt[i]);
-				sum += cnt[i];
-			}
-			System.out.println(sum);
+		
+			System.out.println(ans);
 			T--;
 			
 		}
@@ -42,7 +38,7 @@ public class Main {
 		if ( p[x] == x) {
 			return x;
 		}else {
-			return x = find(p[x]);
+			return p[x] = find(p[x]);
 		}
 	}
 	
@@ -53,8 +49,8 @@ public class Main {
 		if ( X == Y) {
 			return;
 		}else {
-			p[b] = a;
-			cnt[b]++;
+			p[Y] = X;
+			ans++;
 		}
 	}
 }

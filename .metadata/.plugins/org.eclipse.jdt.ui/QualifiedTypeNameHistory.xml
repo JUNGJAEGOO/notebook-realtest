@@ -24,9 +24,9 @@
 <fullyQualifiedTypeName name="java.math.BigInteger"/>
 <fullyQualifiedTypeName name="org.w3c.dom.Node"/>
 <fullyQualifiedTypeName name="java.util.Arrays"/>
-<fullyQualifiedTypeName name="java.io.BufferedReader"/>
 <fullyQualifiedTypeName name="java.lang.Thread"/>
 <fullyQualifiedTypeName name="java.lang.System"/>
 <fullyQualifiedTypeName name="java.lang.Math"/>
+<fullyQualifiedTypeName name="java.io.BufferedReader"/>
 <fullyQualifiedTypeName name="java.util.Scanner"/>
 </qualifiedTypeNameHistroy>

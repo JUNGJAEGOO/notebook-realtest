@@ -8,44 +8,68 @@ public class Main {
 		//Scanner in = new Scanner(System.in);
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		char input[] = in.readLine().toCharArray();
-		String pattern = in.readLine();
-		Stack<Character> st = new Stack<Character>();
-		Stack<Character> tmp = new Stack<Character>();
-		int Plength = pattern.length();
-		int Inlength = input.length;
+		char matcher[] = in.readLine().toCharArray();
 		
-		for ( int i = Inlength - 1 ; i >= 0 ; i--) {
+		//System.out.println(String.valueOf(matcher));
 		
-			st.push(input[i]);
-			String temp ="";
+		int N = input.length;
+		
+		ArrayList<Character> res = new ArrayList<>();
+		
+		int j = 0;
+		int i = 0;
+		
+		//System.out.println(matcher[matcher.length-1]);
+		while( true ) {
 			
-			if ( st.size() >= Plength ) {
-				
-				for ( int j = 0 ; j < Plength ; j++) {
-					//System.out.println(st.get(st.size()-j-1));
-					temp += st.get(st.size()-j-1);
-				}
+			//System.out.println(res);
+			
+			if ( input[i] != matcher[matcher.length-1]) {
+				res.add(input[i]);
+				i++;
 
-				if ( temp.equals(pattern) ) {
-					for ( int j = 0 ; j < Plength ; j++) {
-						//st.add(temp.charAt(j));
-						st.pop();
-						//st.remove(n-j-1);
+			}else {
+				
+				res.add(input[i]);
+				int start = res.size()-1;
+				boolean pass = true;
+	
+				for ( int s = matcher.length-1 ; s >= 0 ; s--) {
+					if ( start < 0) {
+						pass = false;
+						break;
+					}
+					else if ( matcher[s] == res.get(start) ) {
+						
+						start--;
+					}else {
+						pass =false;
+						break;
 					}
 				}
+				
+				if ( pass ) {
+					for ( int s = 0 ; s < matcher.length ; s++) {
+						res.remove(res.size()-1);
+					}
+				}
+				
+				i++;
+
 			}
-		
+			
+			if ( i == N) {
+				break;
+			}
 		}
 		
-		int size = st.size();
-		if ( size == 0) {
+		if( res.size() == 0) {
 			System.out.println("FRULA");
+		}else {
+			for ( int s = 0 ; s < res.size() ; s++) {
+				System.out.print(res.get(s));
+			}
 		}
-		StringBuilder sb= new StringBuilder();
-		for ( int i = 0 ; i < size ; i++) {
-			sb.append(st.get(size-i-1));
-		}
-		System.out.println(sb);
 		
 		
 	}

@@ -1,147 +1,161 @@
-package back5719;
-
 import java.util.*;
 
 public class Main {
+	static int N,M;
+	static int S,E;
+	static ArrayList<node> adj[];
 	static int dist[];
 	static int inf = 1000000000;
-	static ArrayList<node> adj[];
-	static boolean visit[];
+	static ArrayList<ArrayList<Integer>> second;
+	
 	public static void main(String args[]) {
 		Scanner in = new Scanner(System.in);
-		
 		while ( true) {
-		int N = in.nextInt();
-		int M = in.nextInt();
+		N = in.nextInt();
+		M = in.nextInt();
 		if ( N == 0 && M == 0) {
-			break;
-		}
-		int start = in.nextInt();
-		int end = in.nextInt();
-		adj = new ArrayList[N];
-		for (int i = 0 ; i < N ; i++) {
-			adj[i] = new ArrayList<>();
-		}
-		for (int i = 0 ; i < M; i++) {
-			int from = in.nextInt();
-			int to = in.nextInt();
-			int cost = in.nextInt();
-			
-			adj[from].add(new node(to,cost));
-			
+			return;
 		}
 		dist = new int[N];
 		Arrays.fill(dist, inf);
-		diikstra(start);
-		int target = dist[end];
-		//System.out.println(target);
-		ArrayList<Integer> path = new ArrayList<>();
-		path.add(start);
-		visit = new boolean[N];
-		
-		if (dist[end] == inf) {
-			System.out.println(-1);
-			continue;
+		adj = new ArrayList[N];
+		S = in.nextInt();
+		E = in.nextInt();
+		for (int i = 0 ; i < N ; i++) {
+			adj[i] = new ArrayList<node>();
+		}
+		for (int i = 0 ; i < M ; i++) {
+			int from = in.nextInt();
+			int to = in.nextInt();
+			int cost = in.nextInt();
+			adj[from].add(new node(to,cost));
 		}
 		
-		DFS(start,end,0,target,path);
+		diikstra();
+		
+		/*for(int i = 0 ; i < N ; i++) {
+			System.out.println(dist[i]);
+		}
+		*/
+		ArrayList<Integer> visit = new ArrayList<>();
+		second = new ArrayList<>();
+		//System.out.println("처음 최단거리 "+dist[E]);
+		int best = dist[E];
+		
+		DFS(S,0,best,visit);
+		
+	/*	for (int i = 0 ; i < second.size() ; i++) {
+			System.out.println(second.get(i));
+		}
+		*/
+		delete();
 		
 		Arrays.fill(dist, inf);
-		diikstra(start);
-		//System.out.println(dist[end]);
-		if (dist[end] == inf) {
+		
+		diikstra();
+		
+		if ( dist[E] == inf ) {
 			System.out.println(-1);
 		}else {
-			System.out.println(dist[end]);
+			System.out.println(dist[E]);
 		}
+		
 		}
 	}
 	
-	public static void DFS(int now,int T,int sum,int Tcost,ArrayList<Integer> path) {
+	public static void delete() {
 		
-		if ( sum > Tcost) {  // 핵심!!!!!!
+		for ( int i = 0 ; i < second.size() ; i++) {
+			
+			ArrayList<Integer> now = second.get(i);
+			//System.out.println(now);
+			int s = S;
+			
+			for (int k = 0 ; k < now.size() ; k++) {
+				int n = now.get(k);
+				//System.out.println(s+" "+n);
+				for (int j = 0 ; j < adj[s].size() ; j++) {
+
+					if ( adj[s].get(j).to == n) {
+						adj[s].get(j).cost = inf;
+						//System.out.println(s+" 에서 "+adj[s].get(j).to+" 무한대로");
+						s = adj[s].get(j).to;
+						
+						break;
+					}
+				}
+			}
+			
+		}
+	}
+	
+	public static void DFS(int start,int dist,int best,ArrayList<Integer> visit) {
+		
+		//System.out.println(start+" "+dist+" "+visit);
+		if ( dist>best) {
+			return;
+		}
+		if ( start == E && dist == best) {
+			
+			//System.out.println(visit);
+			second.add((ArrayList<Integer>) visit.clone());
 			return;
 		}
 		
-		if ( now == T) {
-			if ( sum == Tcost) {
-				//System.out.println(path);
-				for (int i = 0 ; i < path.size()-1 ; i++) {
-					int from = path.get(i);
-					int to = path.get(i+1);
-					for (int j = 0 ; j < adj[from].size() ; j++) {
-						if ( adj[from].get(j).idx == to) {
-							adj[from].get(j).cost = inf;
-							//System.out.println(from+"~"+to+" "+adj[from].get(j).cost);
-							break;
-						}
-	
-					}
-					
-				}
-				
-				return;
+		for ( int i = 0 ; i < adj[start].size() ; i++) {
+			int next = adj[start].get(i).to;
+			int cost = adj[start].get(i).cost;
+			//System.out.println(next+" "+cost+"!!!!");
+			
+			if( !visit.contains((Integer)next)) {
+				visit.add(next);
+				DFS(next,dist+cost,best,visit);
+				visit.remove(visit.size()-1);
 			}
+			
 		}
-		
-		
-		for (int i = 0 ; i < adj[now].size() ; i++ ) {
-			int next = adj[now].get(i).idx;
-			int nextCost = adj[now].get(i).cost;
-			if( visit[next] == false) {
-				
-				visit[next] = true;
-				path.add(next);
-				DFS(next,T,sum+nextCost,Tcost,path);
-				visit[next] = false;
-				path.remove(path.size()-1);
-			}
-		}
-		
-		
+
 	}
 	
-	public static void diikstra(int start) {
+	public static void diikstra() {
 		PriorityQueue<node> pq = new PriorityQueue<>();
-		pq.add(new node(start,0));
-		dist[start] = 0;
-		while ( !pq.isEmpty()) {
-			
-			node tmp = pq.poll();
-			int idx = tmp.idx;
-			int cost = tmp.cost;
-			
+		pq.add(new node(S,0));
+		dist[S] = 0;
+		while ( !pq.isEmpty() ) {
+			node now = pq.poll();
+			int idx = now.to;
+			int cost = now.cost;
 			if ( dist[idx] < cost) {
 				continue;
 			}
 			
-			for (int i = 0 ; i < adj[idx].size() ; i++) {
-				int next =adj[idx].get(i).idx;
-				int nextCost = adj[idx].get(i).cost;
-				if ( dist[next] > dist[idx] + nextCost) {
-					dist[next] = dist[idx] + nextCost;
-					pq.add(new node(next,nextCost));
+			for ( int i = 0 ; i < adj[idx].size(); i++) {
+				int nextidx = adj[idx].get(i).to;
+				int nextcost = adj[idx].get(i).cost;
+				if ( dist[nextidx] > dist[idx] + nextcost) {
+					dist[nextidx] = dist[idx]+nextcost;
+					pq.add(new node(nextidx,nextcost));
 				}
+				
 			}
-			
-			
 		}
-	
 	}
 	
 	public static class node implements Comparable<node>{
-		int idx;
+		int to;
 		int cost;
-		node(int idx,int cost){
-			this.idx= idx;
-			this.cost =cost;
+		node(int to,int cost){
+			this.to = to;
+			this.cost = cost;
 		}
-		@Override
+	
 		public int compareTo(node o) {
-			if ( this.cost > o.cost) {
+			if ( this.cost < o.cost) {
+				return -1;
+			}else {
 				return 1;
 			}
-			return -1;
 		}
+
 	}
 }
